@@ -36,7 +36,7 @@ class Graph:
 def create_edge(image, width, x1, y1, x2, y2, calculate_weight):
 	id1 = y1 * width + x1
 	id2 = y2 * width + x2
-	weight = calculate_weight(image, id1, id2)
+	weight = calculate_weight(image, x1, y1, x2, y2)
 	return (id1, id2, weight)
 
 def edges(image, width, height, calculate_weight):
@@ -44,24 +44,24 @@ def edges(image, width, height, calculate_weight):
 	for x in range(width):
 		for y in range(height):
 			if x > 0:
-				edges.append(create_edge(image, x, y, x-1, y, calculate_weight))
+				edges.append(create_edge(image, width, x, y, x-1, y, calculate_weight))
 
 			if y > 0:
-				edges.append(create_edge(image, x, y, x, y-1, calculate_weight))
+				edges.append(create_edge(image, width, x, y, x, y-1, calculate_weight))
 
 	return edges	
 
-def segment_graph(edges, num, c):
+def segment_graph(edges, num, k):
 	graph = Graph(num)
 	edges = sorted(edges, key = lambda edge : edge[2])
-	threshold = [c] * num
+	threshold = [k] * num
 	for edge in edges:
-		parent1 = graph.find(edge[0])
-		parent2 = graph.find(edge[1])
+		parent1 = graph.parent(edge[0])
+		parent2 = graph.parent(edge[1])
 		if parent2 != parent1:
 			if edge[2] <= min(threshold[parent1], threshold[parent2]):
 				graph.merge(parent1, parent2)
-				node = graph.find(parent1)
-				threshold[node] = edge[2] + c / graph.nodes[node].size
+				node = graph.parent(parent1)
+				threshold[node] = edge[2] + k / graph.nodes[node].size
 
 	return graph
