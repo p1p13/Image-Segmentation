@@ -49,6 +49,12 @@ def edges(image, width, height, calculate_weight):
 			if y > 0:
 				edges.append(create_edge(image, width, x, y, x, y-1, calculate_weight))
 
+			if x > 0 and y > 0:
+				edges.append(create_edge(image, width, x, y, x-1, y-1, calculate_weight))
+
+			if x > 0 and y < height-1:
+				edges.append(create_edge(image, width, x, y, x-1, y+1, calculate_weight))
+
 	return edges	
 
 def segment_graph(edges, num, k):
